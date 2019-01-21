@@ -3,13 +3,13 @@ Smart AdServer - MoPub SDK Adapter for Android
 
 Introduction
 ------------
-The **_Smart AdServer Android SDK_** can be used with **_MoPub SDK_** through Custom Event Classes provided in this repository.
+The **_Smart Display SDK_** can be used with **_MoPub SDK_** through Custom Event Classes provided in this repository.
 Supported Ad Formats are _Banners_, _Fullscreen_, _Rewarded Video_ and _Native Ads_.
 
 Setup
 -----
 
-1) Install the **_Smart AdServer Android SDK_** in your Android Studio Project. You can follow the instructions in our [documentation](http://documentation.smartadserver.com/DisplaySDK/android/gettingstarted.html).
+1) Install the **_Smart Display SDK_** in your Android Studio Project. You can follow the instructions in our [documentation](http://documentation.smartadserver.com/DisplaySDK/android/gettingstarted.html).
 
 
 2) Checkout this repository and merge the src/ folder (containing adapter classes) into the src/ folder of your project. Folder structure should be as follows :
