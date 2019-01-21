@@ -16,7 +16,7 @@ import com.smartadserver.android.library.ui.SASAdView;
 import java.util.Map;
 
 /**
- * Mopub adapter class for Smart AdServer SDK 6.6 rewarded video format
+ * Mopub adapter class for Smart AdServer SDK 6.10 rewarded video format
  */
 public class SASMoPubCustomEventRewardedVideo extends CustomEventRewardedVideo {
 
@@ -40,6 +40,7 @@ public class SASMoPubCustomEventRewardedVideo extends CustomEventRewardedVideo {
 
     /**
      * Return third party Id
+     *
      * @return
      */
     private String getThirdPartyId() {
@@ -57,7 +58,7 @@ public class SASMoPubCustomEventRewardedVideo extends CustomEventRewardedVideo {
 
     @Override
     protected boolean checkAndInitializeSdk(@NonNull Activity launcherActivity, @NonNull Map<String, Object> localExtras, @NonNull Map<String, String> serverExtras) throws Exception {
-        // nothing to initialize for smart SDK
+        // Nothing to initialize for smart SDK
         return true;
     }
 
@@ -84,34 +85,39 @@ public class SASMoPubCustomEventRewardedVideo extends CustomEventRewardedVideo {
 
         @Override
         public void onInterstitialFailed(MoPubErrorCode errorCode) {
-            MoPubRewardedVideoManager.onRewardedVideoLoadFailure(SASMoPubCustomEventRewardedVideo.class,getThirdPartyId(),errorCode);
+            MoPubRewardedVideoManager.onRewardedVideoLoadFailure(SASMoPubCustomEventRewardedVideo.class, getThirdPartyId(), errorCode);
         }
 
         @Override
         public void onInterstitialShown() {
-            MoPubRewardedVideoManager.onRewardedVideoStarted(SASMoPubCustomEventRewardedVideo.class,getThirdPartyId());
+            MoPubRewardedVideoManager.onRewardedVideoStarted(SASMoPubCustomEventRewardedVideo.class, getThirdPartyId());
         }
 
         @Override
         public void onInterstitialClicked() {
-            MoPubRewardedVideoManager.onRewardedVideoClicked(SASMoPubCustomEventRewardedVideo.class,getThirdPartyId());
+            MoPubRewardedVideoManager.onRewardedVideoClicked(SASMoPubCustomEventRewardedVideo.class, getThirdPartyId());
+        }
+
+        @Override
+        public void onInterstitialImpression() {
+
         }
 
         @Override
         public void onLeaveApplication() {
-            MoPubRewardedVideoManager.onRewardedVideoClicked(SASMoPubCustomEventRewardedVideo.class,getThirdPartyId());
+            MoPubRewardedVideoManager.onRewardedVideoClicked(SASMoPubCustomEventRewardedVideo.class, getThirdPartyId());
         }
 
         @Override
         public void onInterstitialDismissed() {
             if (wasShown) {
-                MoPubRewardedVideoManager.onRewardedVideoClosed(SASMoPubCustomEventRewardedVideo.class,getThirdPartyId());
+                MoPubRewardedVideoManager.onRewardedVideoClosed(SASMoPubCustomEventRewardedVideo.class, getThirdPartyId());
             }
         }
 
         @Override
         public void onReward(SASReward sasReward) {
-            MoPubReward reward = MoPubReward.success(sasReward.getCurrency(), (int)sasReward.getAmount());
+            MoPubReward reward = MoPubReward.success(sasReward.getCurrency(), (int) sasReward.getAmount());
             MoPubRewardedVideoManager.onRewardedVideoCompleted(SASMoPubCustomEventRewardedVideo.class, getThirdPartyId(), reward);
         }
     }
@@ -120,10 +126,10 @@ public class SASMoPubCustomEventRewardedVideo extends CustomEventRewardedVideo {
     @Override
     protected void loadWithSdkInitialized(@NonNull Activity activity, @NonNull Map<String, Object> localExtras, @NonNull Map<String, String> serverExtras) throws Exception {
 
-        // reset state variable
+        // Reset state variable
         hasVideoAvailable = false;
         wasShown = false;
-        moPubCustomEventInterstitial.loadInterstitial(activity,proxyListener,localExtras,serverExtras);
+        moPubCustomEventInterstitial.loadInterstitial(activity, proxyListener, localExtras, serverExtras);
     }
 
     @Override

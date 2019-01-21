@@ -1,9 +1,6 @@
 package com.smartadserver.android.library.mediation;
 
-import com.google.android.gms.ads.mediation.MediationAdRequest;
-
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Utility class

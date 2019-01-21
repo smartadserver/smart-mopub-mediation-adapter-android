@@ -9,7 +9,7 @@ Supported Ad Formats are _Banners_, _Fullscreen_, _Rewarded Video_ and _Native A
 Setup
 -----
 
-1) Install the **_Smart AdServer Android SDK_** in your Android Studio Project. You can follow the instructions in our [documentation](http://help.smartadserver.com/Android/V6.6/#IntegrationGuides/InstallationGuide.htm).
+1) Install the **_Smart AdServer Android SDK_** in your Android Studio Project. You can follow the instructions in our [documentation](http://help.smartadserver.com/Android/V6.10/#IntegrationGuides/InstallationGuide.htm).
 
 
 2) Checkout this repository and merge the src/ folder (containing adapter classes) into the src/ folder of your project. Folder structure should be as follows :
@@ -17,7 +17,7 @@ com/smartadserver/android/library/mediation for all custom event (banner, inters
 com/mopub/nativeads for the specific MoPub renderer class for native ads with video content
 
 
-4) _(Optional)_ **If you plan to use Native Ads with video, you need to register _`SASNativeVideoAdRenderer`_ as a MoPubRenderer for mediated Smart AdServer native ads with video. More info on MoPub [documentation](http://www.mopub.com/resources/docs/android-sdk-integration/integrating-native-ads-android/).  **
+4) _(Optional)_ **If you plan to use Native Ads with video, you need to register _`SASNativeVideoAdRenderer`_ as a MoPubRenderer for mediated Smart AdServer native ads with video. More info on MoPub [documentation](http://www.mopub.com/resources/docs/android-sdk-integration/integrating-native-ads-android/).**
 
 
 5) On your MoPub's dashboard, create a new ***Custom Native Network*** under the _Networks_ tab, and fill your Ad Units with the relevant Custom Event Classes. _For example for a banner Ad Unit, set `SASMoPubCustomEventBanner` as the **Custom Event Class**_.
@@ -36,9 +36,9 @@ com/mopub/nativeads for the specific MoPub renderer class for native ads with vi
 
 Known limitations
 ----------
-- **Impressions** : due to a different logic in impression counting, you may experience discrepancies between MoPub and Smart AdServer impression statistics for Interstitial and RewardedVideo placements. MoPub will count impressions only when the ad is shown whereas Smart AdServer will count as soon as the ad is fully loaded even if you never display it. 
+- **Impressions** : due to a different logic in impression counting, you may experience discrepancies between MoPub and Smart AdServer impression statistics for Interstitial and RewardedVideo placements. MoPub will count impressions only when the ad is shown whereas Smart AdServer will count as soon as the ad is fully loaded even if you never display it.
 
 
 More infos
 ----------
-You can find more informations about the _Smart AdServer Android SDK_ and the _MoPub SDK Custom Events_ in the official documentation: http://help.smartadserver.com/en/
+You can find more informations about the _Smart AdServer Android SDK_ and the _MoPub SDK Custom Events_ in the official documentation: http://documentation.smartadserver.com/DisplaySDK/

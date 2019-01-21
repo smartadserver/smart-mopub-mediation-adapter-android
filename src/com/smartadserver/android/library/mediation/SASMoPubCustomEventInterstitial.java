@@ -27,23 +27,22 @@ import com.smartadserver.android.library.util.SASUtil;
 import java.util.Map;
 
 /**
- * Mopub adapter class for Smart AdServer SDK 6.6 interstitial format
+ * Mopub adapter class for Smart AdServer SDK 6.10 interstitial format
  */
 public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
 
 
     // Smart interstitial view that will handle the mediation ad call
-    SASInterstitialView sasInterstitialView;
+    private SASInterstitialView sasInterstitialView;
 
     // Mopub interstitial listener
-    CustomEventInterstitialListener interstitialListener;
+    private CustomEventInterstitialListener interstitialListener;
 
     // Container view for offscreen interstitial loading (as SASInterstitialView is displayed immediately after successful loading)
-    FrameLayout interstitialContainer;
+    private FrameLayout interstitialContainer;
 
     /**
-     * utility method for rewarded video implementation
-     * @return
+     * Utility method for rewarded video implementation
      */
     public boolean hasVideo() {
         return sasInterstitialView != null && sasInterstitialView.getCurrentAdElement() instanceof SASNativeVideoAdElement;
@@ -56,7 +55,7 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
 
         interstitialListener = customEventInterstitialListener;
 
-        // get smart placement object
+        // Get smart placement object
         SASMoPubCustomEventUtil.SASAdPlacement adPlacement = SASMoPubCustomEventUtil.getPlacementFromMap(serverExtras);
 
         if (adPlacement == null) {
@@ -69,7 +68,7 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
                     @Override
                     public void adLoadingCompleted(SASAdElement sasAdElement) {
                         //  notify AdMob of AdLoaded
-                        synchronized(SASMoPubCustomEventInterstitial.this) {
+                        synchronized (SASMoPubCustomEventInterstitial.this) {
                             if (sasInterstitialView != null) {
                                 sasInterstitialView.post(new Runnable() {
                                     @Override
@@ -83,19 +82,19 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
 
                     @Override
                     public void adLoadingFailed(final Exception e) {
-                        // notify admob that ad call has failed with appropriate eror code
-                        synchronized(SASMoPubCustomEventInterstitial.this) {
+                        // Notify admob that ad call has failed with appropriate error code
+                        synchronized (SASMoPubCustomEventInterstitial.this) {
                             if (sasInterstitialView != null) {
                                 sasInterstitialView.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        // default generic error code
+                                        // Default generic error code
                                         MoPubErrorCode errorCode = MoPubErrorCode.UNSPECIFIED;
                                         if (e instanceof SASNoAdToDeliverException) {
-                                            // no ad to deliver
+                                            // No ad to deliver
                                             errorCode = MoPubErrorCode.NO_FILL;
                                         } else if (e instanceof SASAdTimeoutException) {
-                                            // ad request timeout translates to admob network error
+                                            // Ad request timeout translates to AdMob network error
                                             errorCode = MoPubErrorCode.NETWORK_TIMEOUT;
                                         }
                                         interstitialListener.onInterstitialFailed(errorCode);
@@ -106,7 +105,7 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
                     }
                 };
 
-                // instantiate SASInterstitialView that will perform the Smart ad call
+                // Instantiate SASInterstitialView that will perform the Smart ad call
                 sasInterstitialView = new SASInterstitialView(context) {
 
                     /**
@@ -116,35 +115,24 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
                     public void open(String url) {
                         super.open(url);
                         if (isAdWasOpened()) {
-                            SASAdElement adElement = sasInterstitialView.getCurrentAdElement();
-                            final boolean openInApp = adElement.isOpenClickInApplication();
-                            post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (!openInApp) {
-                                        interstitialListener.onLeaveApplication();
-                                    } else {
-                                        interstitialListener.onInterstitialClicked();
-                                    }
-                                }
-                            });
+                            interstitialListener.onInterstitialClicked();
                         }
                     }
                 };
 
-                // add state change listener to detect when ad is closed or loaded and expanded (=ready to be displayed)
+                // Add state change listener to detect when ad is closed or loaded and expanded (=ready to be displayed)
                 sasInterstitialView.addStateChangeListener(new SASAdView.OnStateChangeListener() {
                     public void onStateChanged(
                             SASAdView.StateChangeEvent stateChangeEvent) {
                         switch (stateChangeEvent.getType()) {
                             case SASAdView.StateChangeEvent.VIEW_HIDDEN:
-                                // ad was closed
+                                // Ad was closed
                                 ViewParent parent = interstitialContainer.getParent();
                                 if (parent instanceof ViewGroup) {
-                                    ((ViewGroup)parent).removeView(interstitialContainer);
+                                    ((ViewGroup) parent).removeView(interstitialContainer);
                                 }
 
-                                // defer onInterstitialDismissed() call not to conflict with onInterstitialClicked/onLeaveApplication
+                                // Defer onInterstitialDismissed() call not to conflict with onInterstitialClicked/onLeaveApplication
                                 // that occurred just before when clicking on the interstitial (otherwise click pixel not called)
                                 sasInterstitialView.post(new Runnable() {
                                     @Override
@@ -157,12 +145,12 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
                     }
                 });
 
-                // useful for rewarded video adapter
+                // Useful for rewarded video adapter
                 if (interstitialListener instanceof SASAdView.OnRewardListener) {
-                    sasInterstitialView.addRewardListener((SASAdView.OnRewardListener)interstitialListener);
+                    sasInterstitialView.addRewardListener((SASAdView.OnRewardListener) interstitialListener);
                 }
 
-                // create the (offscreen) FrameLayout that the SASInterstitialView will expand into
+                // Create the (offscreen) FrameLayout that the SASInterstitialView will expand into
                 if (interstitialContainer == null) {
                     interstitialContainer = new FrameLayout(context);
                     interstitialContainer.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -170,12 +158,12 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
 
                 sasInterstitialView.setExpandParentContainer(interstitialContainer);
 
-//                // detect layout changes to update padding
+                // Detect layout changes to update padding
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     sasInterstitialView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                         @Override
                         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                            // on layout change, add a globalLayoutListener to apply padding once layout is done (and not to early)
+                            // On layout change, add a globalLayoutListener to apply padding once layout is done (and not to early)
                             sasInterstitialView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                 @Override
                                 public void onGlobalLayout() {
@@ -183,13 +171,13 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
                                     Rect r = new Rect();
                                     ViewParent parentView = interstitialContainer.getParent();
                                     if (parentView instanceof View) {
-                                        ((View)parentView).getWindowVisibleDisplayFrame(r);
+                                        ((View) parentView).getWindowVisibleDisplayFrame(r);
                                         int topPadding = r.top;
-                                        // handle navigation bar overlay by adding padding
+                                        // Handle navigation bar overlay by adding padding
                                         int leftPadding = r.left;
-                                        int bottomPadding = Math.max(0,((View)parentView).getHeight() - r.bottom);
-                                        int rightPadding =  Math.max(0,((View)parentView).getWidth() - r.right);
-                                        interstitialContainer.setPadding(leftPadding,topPadding,rightPadding,bottomPadding);
+                                        int bottomPadding = Math.max(0, ((View) parentView).getHeight() - r.bottom);
+                                        int rightPadding = Math.max(0, ((View) parentView).getWidth() - r.right);
+                                        interstitialContainer.setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
                                     }
                                 }
                             });
@@ -197,13 +185,13 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
                     });
                 }
 
-                // pass received location on to SASBannerView
+                // Pass received location on to SASBannerView
                 boolean locationEnabled = !(MoPub.getLocationAwareness() == MoPub.LocationAwareness.DISABLED);
                 SASUtil.setAllowAutomaticLocationDetection(locationEnabled);
 
                 // Now request ad for this SASBannerView
-                sasInterstitialView.loadAd(adPlacement.siteId,adPlacement.pageId,adPlacement.formatId,true,
-                        adPlacement.targeting,adResponseHandler,10000);
+                sasInterstitialView.loadAd(adPlacement.siteId, adPlacement.pageId, adPlacement.formatId, true,
+                        adPlacement.targeting, adResponseHandler, 10000);
 
             }
         }
@@ -217,19 +205,19 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
     @Override
     protected void showInterstitial() {
 
-        // find the rootView where to add the interstitialContainer
+        // Find the rootView where to add the interstitialContainer
         View rootContentView = null;
         Context context = sasInterstitialView.getContext();
         if (context instanceof Activity) {
-            // try to find root view via Activity if available
-            rootContentView = ((Activity)context).getWindow().getDecorView();
+            // Try to find root view via Activity if available
+            rootContentView = ((Activity) context).getWindow().getDecorView();
         }
 
-        // now actually add the interstitialContainer including appropriate padding fir status/navigation bars
+        // Now actually add the interstitialContainer including appropriate padding fir status/navigation bars
         if (rootContentView instanceof ViewGroup) {
-            ((ViewGroup)rootContentView).addView(interstitialContainer);
+            ((ViewGroup) rootContentView).addView(interstitialContainer);
 
-            // notify Mopub listener that ad was presented full screen
+            // Notify Mopub listener that ad was presented full screen
             if (interstitialListener != null) {
                 interstitialListener.onInterstitialShown();
             }
@@ -240,10 +228,10 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
     protected synchronized void onInvalidate() {
         if (sasInterstitialView != null) {
             if (interstitialListener instanceof SASAdView.OnVideoEventListener) {
-                sasInterstitialView.removeVideoEventListener((SASAdView.OnVideoEventListener)interstitialListener);
+                sasInterstitialView.removeVideoEventListener((SASAdView.OnVideoEventListener) interstitialListener);
             }
             if (interstitialListener instanceof SASAdView.OnRewardListener) {
-                sasInterstitialView.removeRewardListener((SASAdView.OnRewardListener)interstitialListener);
+                sasInterstitialView.removeRewardListener((SASAdView.OnRewardListener) interstitialListener);
             }
             sasInterstitialView.setExpandParentContainer(null);
             sasInterstitialView.onDestroy();
