@@ -1,46 +1,95 @@
 package com.smartadserver.android.library.mediation;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.mopub.common.MoPub;
+import com.smartadserver.android.library.model.SASAdPlacement;
+import com.smartadserver.android.library.util.SASConfiguration;
+
 import java.util.Map;
 
 /**
- * Utility class
+ * Utility class needed by all SASMoPubCustomEvent adapters. Handles Smart Display SDK configuration.
  */
 public class SASMoPubCustomEventUtil {
 
-    private static final String siteIdKey = "siteid";
-    private static final String pageIdKey = "pageid";
-    private static final String formatIdKey = "formatid";
-    private static final String targetKey = "target";
+    private static final String BASE_URL = "https://mobile.smartadserver.com"; // TODO replace it with your own base URL.
+
+    private static final String SITE_ID_KEY = "siteid";
+    private static final String PAGE_ID_KEY = "pageid";
+    private static final String FORMAT_ID_KEY = "formatid";
+    private static final String TARGET_KEY = "target";
 
     /**
-     * Convenience holder class for ad placement parameters
+     * Configures the Smart Display SDK if needed.
+     *
+     * @param context     The current application context.
+     * @param moPubParams MoPub's serverExtra parameters.
+     * @return true if the SDK is correctly configured, false otherwise.
      */
-    public static class SASAdPlacement {
-        public int siteId;
-        public String pageId = "";
-        public int formatId;
-        public String targeting = "";
+    @SuppressLint("Range")
+    public static boolean configureSDKIfNeeded(@NonNull Context context, @NonNull Map<String, String> moPubParams) {
+
+        int siteId = -1;
+        String rawSiteId = moPubParams.get(SITE_ID_KEY);
+
+        if (rawSiteId != null) {
+            siteId = Integer.parseInt(rawSiteId);
+        }
+
+        if (siteId <= 0) {
+            // Invalid placement
+            return false;
+        }
+
+        SASConfiguration sasConfiguration = SASConfiguration.getSharedInstance();
+
+        // We configure the Smart Display SDK if not already done.
+        if (!sasConfiguration.isConfigured()) {
+            try {
+                sasConfiguration.configure(context, siteId, BASE_URL);
+                sasConfiguration.setLoggingEnabled(true);
+            } catch (SASConfiguration.ConfigurationException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        boolean locationEnabled = !(MoPub.getLocationAwareness() == MoPub.LocationAwareness.DISABLED);
+        sasConfiguration.setAutomaticLocationAllowed(locationEnabled);
+
+        return true;
     }
 
     /**
-     * Returns a SASAdPlacement instance from passed parameters
+     * Returns an instance of SASAdPlacement from the given MoPub's server params.
+     *
+     * @param moPubParams MoPub's server params.
+     * @return An instance of SASAdPlacement, or null if MoPub's params are invalid.
      */
-    public static SASAdPlacement getPlacementFromMap(Map<String, String> moPubParams) {
+    @Nullable
+    public static SASAdPlacement getAdPlacementFromServerParams(@NonNull Map<String, String> moPubParams) {
+        int siteId = -1;
+        int formatId = -1;
+        String pageId = moPubParams.get(PAGE_ID_KEY);
+        String targeting = moPubParams.get(TARGET_KEY);
 
-        SASAdPlacement adPlacement = new SASAdPlacement();
-        try {
-            adPlacement.siteId = Integer.parseInt(moPubParams.get(siteIdKey));
-            adPlacement.formatId = Integer.parseInt(moPubParams.get(formatIdKey));
-            adPlacement.pageId = moPubParams.get(pageIdKey);
-            adPlacement.targeting = moPubParams.get(targetKey);
-            if (adPlacement.pageId == null || adPlacement.pageId.length() == 0) {
-                throw new IllegalArgumentException(); // will end up in catch block..
-            }
+        String rawSiteId = moPubParams.get(SITE_ID_KEY);
+        String rawFormatId = moPubParams.get(FORMAT_ID_KEY);
 
-        }  catch (Exception e) {
-            adPlacement = null;
+        if (rawSiteId != null && rawFormatId != null) {
+            siteId = Integer.parseInt(rawSiteId);
+            formatId = Integer.parseInt(rawFormatId);
         }
 
-        return adPlacement;
+        if (pageId == null || pageId.length() == 0 || siteId <= 0 || formatId <= 0) {
+            // Invalid placement
+            return null;
+        }
+
+        return new SASAdPlacement(siteId, pageId, formatId, targeting);
     }
 }

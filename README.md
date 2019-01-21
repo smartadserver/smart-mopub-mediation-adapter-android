@@ -9,7 +9,7 @@ Supported Ad Formats are _Banners_, _Fullscreen_, _Rewarded Video_ and _Native A
 Setup
 -----
 
-1) Install the **_Smart AdServer Android SDK_** in your Android Studio Project. You can follow the instructions in our [documentation](http://help.smartadserver.com/Android/V6.10/#IntegrationGuides/InstallationGuide.htm).
+1) Install the **_Smart AdServer Android SDK_** in your Android Studio Project. You can follow the instructions in our [documentation](http://documentation.smartadserver.com/DisplaySDK/android/gettingstarted.html).
 
 
 2) Checkout this repository and merge the src/ folder (containing adapter classes) into the src/ folder of your project. Folder structure should be as follows :
@@ -33,10 +33,6 @@ com/mopub/nativeads for the specific MoPub renderer class for native ads with vi
 
 
 8) That's it, you're all set, you should be able to display _Smart AdServer's_ ads through your _MoPub SDK_ integration.
-
-Known limitations
-----------
-- **Impressions** : due to a different logic in impression counting, you may experience discrepancies between MoPub and Smart AdServer impression statistics for Interstitial and RewardedVideo placements. MoPub will count impressions only when the ad is shown whereas Smart AdServer will count as soon as the ad is fully loaded even if you never display it.
 
 
 More infos

@@ -4,36 +4,27 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.mopub.common.MoPub;
 import com.mopub.nativeads.BaseNativeAd;
 import com.mopub.nativeads.CustomEventNative;
-import com.mopub.nativeads.MoPubCustomEventVideoNative;
 import com.mopub.nativeads.NativeErrorCode;
 import com.mopub.nativeads.StaticNativeAd;
-import com.mopub.nativeads.VideoNativeAd;
 import com.smartadserver.android.library.exception.SASAdTimeoutException;
 import com.smartadserver.android.library.exception.SASNoAdToDeliverException;
+import com.smartadserver.android.library.model.SASAdPlacement;
 import com.smartadserver.android.library.model.SASNativeAdElement;
 import com.smartadserver.android.library.model.SASNativeAdManager;
-import com.smartadserver.android.library.model.SASNativeAdPlacement;
 import com.smartadserver.android.library.model.SASNativeVideoAdElement;
-import com.smartadserver.android.library.ui.SASAdChoicesView;
-import com.smartadserver.android.library.util.SASConstants;
 import com.smartadserver.android.library.util.SASUtil;
 
 import java.util.Map;
 
 /**
- * Mopub adapter class for Smart AdServer SDK 6.6 native ad format
+ * Class that handles a MoPub mediation native ad call to Smart Display SDK.
  */
 public class SASMoPubCustomEventNative extends CustomEventNative {
 
-    CustomEventNativeListener nativeListener;
-
-    SASNativeAdManager nativeAdManager;
-
     /**
-     * Class representing a native ad with static content (no video)
+     * Class representing a MoPub native ad with static content (no video).
      */
     public static class SASStaticNativeAd extends StaticNativeAd {
 
@@ -52,16 +43,19 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
             });
 
             setCallToAction(sasNativeAdElement.getCalltoAction());
-//            setClickDestinationUrl(sasNativeAdElement.getClickUrl());
+            setClickDestinationUrl(sasNativeAdElement.getClickUrl());
+            setTitle(sasNativeAdElement.getTitle());
+            setText(sasNativeAdElement.getSubtitle());
+            setStarRating((double) sasNativeAdElement.getRating());
+
             if (sasNativeAdElement.getIcon() != null) {
                 setIconImageUrl(sasNativeAdElement.getIcon().getUrl());
             }
+
             if (sasNativeAdElement.getCoverImage() != null) {
                 setMainImageUrl(sasNativeAdElement.getCoverImage().getUrl());
             }
-            setTitle(sasNativeAdElement.getTitle());
-            setText(sasNativeAdElement.getSubtitle());
-            setStarRating((double)sasNativeAdElement.getRating());
+
 
         }
 
@@ -78,7 +72,7 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
     }
 
     /**
-     * Class representing a native ad with video content
+     * Class representing a MoPub native ad with video content.
      */
     public static class SASVideoNativeAd extends BaseNativeAd {
 
@@ -130,7 +124,7 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
             if (sasNativeAdElement.getCoverImage() != null) {
                 mainImageUrl = sasNativeAdElement.getCoverImage().getUrl();
             }
-            return  mainImageUrl;
+            return mainImageUrl;
         }
 
         public String getIconImageUrl() {
@@ -138,7 +132,7 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
             if (sasNativeAdElement.getIcon() != null) {
                 iconUrl = sasNativeAdElement.getIcon().getUrl();
             }
-            return  iconUrl;
+            return iconUrl;
         }
 
         public String getPrivacyInformationIconImageUrl() {
@@ -146,7 +140,7 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
         }
 
         public String getPrivacyInformationIconClickThroughUrl() {
-            return "http://smartadserver.fr/societe/politique-de-confidentialite/";
+            return "https://smartadserver.fr/societe/politique-de-confidentialite/";
         }
 
         public SASNativeAdElement getSASNativeAd() {
@@ -155,97 +149,84 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
     }
 
     @Override
-    /**
-     *
-     */
-    protected void loadNativeAd(@NonNull Context context, @NonNull CustomEventNativeListener customEventNativeListener,
+    protected void loadNativeAd(@NonNull Context context, @NonNull final CustomEventNativeListener customEventNativeListener,
                                 @NonNull Map<String, Object> localExtras, @NonNull Map<String, String> serverExtras) {
 
-        nativeListener = customEventNativeListener;
-
-        // get smart placement object
-        SASMoPubCustomEventUtil.SASAdPlacement adPlacement = SASMoPubCustomEventUtil.getPlacementFromMap(serverExtras);
-
-        // no placement -> exit on error
-        if (adPlacement == null) {
-            // incorrect smart placement : exit in error
-            nativeListener.onNativeAdFailed(NativeErrorCode.NATIVE_ADAPTER_CONFIGURATION_ERROR);
-        } else {
-            // create native ad manager
-            if (nativeAdManager == null) {
-                nativeAdManager = new SASNativeAdManager(context,new SASNativeAdPlacement(SASConstants.DEFAULT_BASE_URL,
-                                                adPlacement.siteId,adPlacement.pageId,adPlacement.formatId,adPlacement.targeting));
-
-                // create NativeAdResponseHandler to handle native ad call response
-                SASNativeAdManager.NativeAdResponseHandler nativeAdResponseHandler = new SASNativeAdManager.NativeAdResponseHandler() {
-                    @Override
-                    /**
-                     * Native ad succeeded
-                     */
-                    public void nativeAdLoadingCompleted(final SASNativeAdElement sasNativeAdElement) {
-
-                        BaseNativeAd baseNativeAd = null;
-
-                        SASNativeVideoAdElement videoAdElement = sasNativeAdElement.getMediaElement();
-
-                        boolean videoRendererAvailable = false;
-                        try {
-                            Class.forName("com.mopub.nativeads.SASNativeVideoAdRenderer");
-                            videoRendererAvailable = true;
-                        } catch (ClassNotFoundException e) { }
-
-                        // create a native video ad only if renderer is available
-                        if (videoAdElement != null && videoRendererAvailable) {
-                            baseNativeAd = new SASVideoNativeAd(sasNativeAdElement);
-                        } else {
-                            baseNativeAd = new SASStaticNativeAd(sasNativeAdElement);
-                        }
-
-                        final BaseNativeAd finalNativeAd = baseNativeAd;
-                        // must be executed in Main thread
-                        SASUtil.getMainLooperHandler().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                nativeListener.onNativeAdLoaded(finalNativeAd);
-                            }
-                        });
-                    }
-
-                    @Override
-                    /**
-                     * Native ad failed
-                     */
-                    public void nativeAdLoadingFailed(Exception e) {
-                        nativeListener.onNativeAdFailed(NativeErrorCode.NETWORK_NO_FILL);
-
-                        NativeErrorCode errorCode = NativeErrorCode.UNSPECIFIED;
-                        if (e instanceof SASNoAdToDeliverException) {
-                            // no ad to deliver
-                            errorCode = NativeErrorCode.NETWORK_NO_FILL;
-                        } else if (e instanceof SASAdTimeoutException) {
-                            // ad request timeout translates to admob network error
-                            errorCode = NativeErrorCode.NETWORK_TIMEOUT;
-                        }
-
-                        // must be executed in Main thread
-                        final NativeErrorCode finalCode = errorCode;
-                        SASUtil.getMainLooperHandler().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                nativeListener.onNativeAdFailed(finalCode);
-                            }
-                        });
-                    }
-                };
-
-                // pass received location on to SASBannerView
-                boolean locationEnabled = !(MoPub.getLocationAwareness() == MoPub.LocationAwareness.DISABLED);
-                SASUtil.setAllowAutomaticLocationDetection(locationEnabled);
-
-                nativeAdManager.requestNativeAd(nativeAdResponseHandler,10000);
-            }
-
+        // First, configure the Smart Display SDK
+        if (!SASMoPubCustomEventUtil.configureSDKIfNeeded(context, serverExtras)) {
+            // Error during configuration
+            customEventNativeListener.onNativeAdFailed(NativeErrorCode.NATIVE_ADAPTER_CONFIGURATION_ERROR);
+            return;
         }
 
+        // Get the Smart ad placement
+        SASAdPlacement adPlacement = SASMoPubCustomEventUtil.getAdPlacementFromServerParams(serverExtras);
+
+        if (adPlacement == null) {
+            // Invalid Smart ad placement
+            customEventNativeListener.onNativeAdFailed(NativeErrorCode.NATIVE_ADAPTER_CONFIGURATION_ERROR);
+            return;
+        }
+
+        // Create native ad manager
+        SASNativeAdManager nativeAdManager = new SASNativeAdManager(context, adPlacement);
+
+        // Set the native ad manager listener
+        nativeAdManager.setNativeAdListener(new SASNativeAdManager.NativeAdListener() {
+            @Override
+            public void onNativeAdLoaded(SASNativeAdElement sasNativeAdElement) {
+                BaseNativeAd baseNativeAd;
+
+                SASNativeVideoAdElement videoAdElement = sasNativeAdElement.getMediaElement();
+
+                boolean videoRendererAvailable = false;
+                try {
+                    Class.forName("com.mopub.nativeads.SASNativeVideoAdRenderer");
+                    videoRendererAvailable = true;
+                } catch (ClassNotFoundException ignored) {
+                }
+
+                // Create a native video ad only if renderer is available
+                if (videoAdElement != null && videoRendererAvailable) {
+                    baseNativeAd = new SASVideoNativeAd(sasNativeAdElement);
+                } else {
+                    baseNativeAd = new SASStaticNativeAd(sasNativeAdElement);
+                }
+
+                final BaseNativeAd finalNativeAd = baseNativeAd;
+                // Must be executed in Main thread
+                SASUtil.getMainLooperHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        customEventNativeListener.onNativeAdLoaded(finalNativeAd);
+                    }
+                });
+            }
+
+            @Override
+            public void onNativeAdFailedToLoad(Exception e) {
+                customEventNativeListener.onNativeAdFailed(NativeErrorCode.NETWORK_NO_FILL);
+
+                NativeErrorCode errorCode = NativeErrorCode.UNSPECIFIED;
+                if (e instanceof SASNoAdToDeliverException) {
+                    // No ad to deliver
+                    errorCode = NativeErrorCode.NETWORK_NO_FILL;
+                } else if (e instanceof SASAdTimeoutException) {
+                    // Ad request timeout translates to admob network error
+                    errorCode = NativeErrorCode.NETWORK_TIMEOUT;
+                }
+
+                // Must be executed in Main thread
+                final NativeErrorCode finalCode = errorCode;
+                SASUtil.getMainLooperHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        customEventNativeListener.onNativeAdFailed(finalCode);
+                    }
+                });
+            }
+        });
+
+        nativeAdManager.loadNativeAd();
     }
 }
