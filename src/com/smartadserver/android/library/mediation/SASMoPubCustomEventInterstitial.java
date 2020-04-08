@@ -1,6 +1,7 @@
 package com.smartadserver.android.library.mediation;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.mopub.mobileads.CustomEventInterstitial;
 import com.mopub.mobileads.MoPubErrorCode;
@@ -48,13 +49,13 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
         interstitialManager.setInterstitialListener(new SASInterstitialManager.InterstitialListener() {
             @Override
             public void onInterstitialAdLoaded(SASInterstitialManager sasInterstitialManager, SASAdElement sasAdElement) {
-                SASUtil.logDebug(TAG, "Smart interstitial is loaded.");
+                Log.d(TAG, "Smart interstitial is loaded.");
                 customEventInterstitialListener.onInterstitialLoaded();
             }
 
             @Override
             public void onInterstitialAdFailedToLoad(SASInterstitialManager sasInterstitialManager, Exception e) {
-                SASUtil.logDebug(TAG, "Smart intersititial failed to load.");
+                Log.d(TAG, "Smart intersititial failed to load.");
 
                 // Default generic error code
                 MoPubErrorCode errorCode = MoPubErrorCode.UNSPECIFIED;
@@ -71,31 +72,31 @@ public class SASMoPubCustomEventInterstitial extends CustomEventInterstitial {
 
             @Override
             public void onInterstitialAdShown(SASInterstitialManager sasInterstitialManager) {
-                SASUtil.logDebug(TAG, "Smart interstitial shown.");
+                Log.d(TAG, "Smart interstitial shown.");
                 customEventInterstitialListener.onInterstitialShown();
             }
 
             @Override
             public void onInterstitialAdFailedToShow(SASInterstitialManager sasInterstitialManager, Exception e) {
-                SASUtil.logDebug(TAG, "Smart interstitial failed to show.");
+                Log.d(TAG, "Smart interstitial failed to show.");
                 customEventInterstitialListener.onInterstitialFailed(MoPubErrorCode.VIDEO_PLAYBACK_ERROR);
             }
 
             @Override
             public void onInterstitialAdClicked(SASInterstitialManager sasInterstitialManager) {
-                SASUtil.logDebug(TAG, "Smart interstitial clicked.");
+                Log.d(TAG, "Smart interstitial clicked.");
                 customEventInterstitialListener.onInterstitialClicked();
             }
 
             @Override
             public void onInterstitialAdDismissed(SASInterstitialManager sasInterstitialManager) {
-                SASUtil.logDebug(TAG, "Smart interstitial dismissed.");
+                Log.d(TAG, "Smart interstitial dismissed.");
                 customEventInterstitialListener.onInterstitialDismissed();
             }
 
             @Override
             public void onInterstitialAdVideoEvent(SASInterstitialManager sasInterstitialManager, int i) {
-                SASUtil.logDebug(TAG, "Smart interstitial video event: " + i);
+                Log.d(TAG, "Smart interstitial video event: " + i);
                 // No equivalent
             }
         });

@@ -1,6 +1,7 @@
 package com.smartadserver.android.library.mediation;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.mopub.mobileads.CustomEventBanner;
 import com.mopub.mobileads.MoPubErrorCode;
@@ -50,13 +51,13 @@ public class SASMoPubCustomEventBanner extends CustomEventBanner {
         sasBannerView.setBannerListener(new SASBannerView.BannerListener() {
             @Override
             public void onBannerAdLoaded(SASBannerView sasBannerView, SASAdElement sasAdElement) {
-                SASUtil.logDebug(TAG, "Smart banner is loaded.");
+                Log.d(TAG, "Smart banner is loaded.");
                 customEventBannerListener.onBannerLoaded(sasBannerView);
             }
 
             @Override
             public void onBannerAdFailedToLoad(SASBannerView sasBannerView, Exception e) {
-                SASUtil.logDebug(TAG, "smart banner failed to load.");
+                Log.d(TAG, "smart banner failed to load.");
 
                 MoPubErrorCode errorCode = MoPubErrorCode.UNSPECIFIED;
                 if (e instanceof SASNoAdToDeliverException) {
@@ -72,37 +73,37 @@ public class SASMoPubCustomEventBanner extends CustomEventBanner {
 
             @Override
             public void onBannerAdClicked(SASBannerView sasBannerView) {
-                SASUtil.logDebug(TAG, "Smart banner clicked.");
+                Log.d(TAG, "Smart banner clicked.");
                 customEventBannerListener.onBannerClicked();
             }
 
             @Override
             public void onBannerAdExpanded(SASBannerView sasBannerView) {
-                SASUtil.logDebug(TAG, "Smart banner expanded.");
+                Log.d(TAG, "Smart banner expanded.");
                 customEventBannerListener.onBannerExpanded();
             }
 
             @Override
             public void onBannerAdCollapsed(SASBannerView sasBannerView) {
-                SASUtil.logDebug(TAG, "Smart banner collapsed.");
+                Log.d(TAG, "Smart banner collapsed.");
                 customEventBannerListener.onBannerCollapsed();
             }
 
             @Override
             public void onBannerAdResized(SASBannerView sasBannerView) {
-                SASUtil.logDebug(TAG, "Smart banner resized.");
+                Log.d(TAG, "Smart banner resized.");
                 // no equivalent
             }
 
             @Override
             public void onBannerAdClosed(SASBannerView sasBannerView) {
-                SASUtil.logDebug(TAG, "Smart banner closed.");
+                Log.d(TAG, "Smart banner closed.");
                 // no equivalent
             }
 
             @Override
             public void onBannerAdVideoEvent(SASBannerView sasBannerView, int i) {
-                SASUtil.logDebug(TAG, "Smart banner video event: " + i);
+                Log.d(TAG, "Smart banner video event: " + i);
                 // no equivalent
             }
         });

@@ -2,8 +2,9 @@ package com.smartadserver.android.library.mediation;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.mopub.common.MoPub;
 import com.smartadserver.android.library.model.SASAdPlacement;
@@ -59,7 +60,7 @@ public class SASMoPubCustomEventUtil {
         }
 
         boolean locationEnabled = !(MoPub.getLocationAwareness() == MoPub.LocationAwareness.DISABLED);
-        sasConfiguration.setAutomaticLocationAllowed(locationEnabled);
+        sasConfiguration.setAutomaticLocationDetectionAllowed(locationEnabled);
 
         return true;
     }

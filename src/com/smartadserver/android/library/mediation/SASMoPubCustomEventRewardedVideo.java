@@ -1,8 +1,9 @@
 package com.smartadserver.android.library.mediation;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.mopub.common.LifecycleListener;
@@ -16,7 +17,6 @@ import com.smartadserver.android.library.model.SASAdElement;
 import com.smartadserver.android.library.model.SASAdPlacement;
 import com.smartadserver.android.library.model.SASReward;
 import com.smartadserver.android.library.rewarded.SASRewardedVideoManager;
-import com.smartadserver.android.library.util.SASUtil;
 
 import java.util.Map;
 
@@ -65,13 +65,13 @@ public class SASMoPubCustomEventRewardedVideo extends CustomEventRewardedVideo {
         rewardedVideoManager.setRewardedVideoListener(new SASRewardedVideoManager.RewardedVideoListener() {
             @Override
             public void onRewardedVideoAdLoaded(SASRewardedVideoManager sasRewardedVideoManager, SASAdElement sasAdElement) {
-                SASUtil.logDebug(TAG, "Smart rewarded video loaded");
+                Log.d(TAG, "Smart rewarded video loaded");
                 MoPubRewardedVideoManager.onRewardedVideoLoadSuccess(SASMoPubCustomEventRewardedVideo.class, getAdNetworkId());
             }
 
             @Override
             public void onRewardedVideoAdFailedToLoad(SASRewardedVideoManager sasRewardedVideoManager, Exception e) {
-                SASUtil.logDebug(TAG, "Smart rewarded video failed to load");
+                Log.d(TAG, "Smart rewarded video failed to load");
 
                 // Default generic error code
                 MoPubErrorCode errorCode = MoPubErrorCode.UNSPECIFIED;
@@ -88,43 +88,43 @@ public class SASMoPubCustomEventRewardedVideo extends CustomEventRewardedVideo {
 
             @Override
             public void onRewardedVideoAdShown(SASRewardedVideoManager sasRewardedVideoManager) {
-                SASUtil.logDebug(TAG, "Smart rewarded video shown");
+                Log.d(TAG, "Smart rewarded video shown");
                 MoPubRewardedVideoManager.onRewardedVideoStarted(SASMoPubCustomEventRewardedVideo.class, getAdNetworkId());
             }
 
             @Override
             public void onRewardedVideoAdFailedToShow(SASRewardedVideoManager sasRewardedVideoManager, Exception e) {
-                SASUtil.logDebug(TAG, "Smart rewarded video failed to show");
+                Log.d(TAG, "Smart rewarded video failed to show");
                 MoPubRewardedVideoManager.onRewardedVideoLoadFailure(SASMoPubCustomEventRewardedVideo.class, getAdNetworkId(), MoPubErrorCode.VIDEO_PLAYBACK_ERROR);
             }
 
             @Override
             public void onRewardedVideoAdClosed(SASRewardedVideoManager sasRewardedVideoManager) {
-                SASUtil.logDebug(TAG, "Smart rewarded video closed");
+                Log.d(TAG, "Smart rewarded video closed");
                 MoPubRewardedVideoManager.onRewardedVideoClosed(SASMoPubCustomEventRewardedVideo.class, getAdNetworkId());
             }
 
             @Override
             public void onRewardReceived(SASRewardedVideoManager sasRewardedVideoManager, SASReward sasReward) {
-                SASUtil.logDebug(TAG, "Smart rewarded video received reward: " + sasReward);
+                Log.d(TAG, "Smart rewarded video received reward: " + sasReward);
                 MoPubReward reward = MoPubReward.success(sasReward.getCurrency(), (int) sasReward.getAmount());
                 MoPubRewardedVideoManager.onRewardedVideoCompleted(SASMoPubCustomEventRewardedVideo.class, getAdNetworkId(), reward);
             }
 
             @Override
             public void onRewardedVideoAdClicked(SASRewardedVideoManager sasRewardedVideoManager) {
-                SASUtil.logDebug(TAG, "Smart rewarded video clicked");
+                Log.d(TAG, "Smart rewarded video clicked");
                 MoPubRewardedVideoManager.onRewardedVideoClicked(SASMoPubCustomEventRewardedVideo.class, getAdNetworkId());
             }
 
             @Override
             public void onRewardedVideoEvent(SASRewardedVideoManager sasRewardedVideoManager, int i) {
-                SASUtil.logDebug(TAG, "Smart rewarded video event: " + i);
+                Log.d(TAG, "Smart rewarded video event: " + i);
             }
 
             @Override
             public void onRewardedVideoEndCardDisplayed(SASRewardedVideoManager sasRewardedVideoManager, ViewGroup viewGroup) {
-                SASUtil.logDebug(TAG, "Smart rewarded video loaded");
+                Log.d(TAG, "Smart rewarded video loaded");
                 // No equivalent
             }
         });
