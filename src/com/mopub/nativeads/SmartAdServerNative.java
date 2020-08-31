@@ -1,13 +1,10 @@
-package com.smartadserver.android.library.mediation;
+package com.mopub.nativeads;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
 import android.view.View;
 
-import com.mopub.nativeads.BaseNativeAd;
-import com.mopub.nativeads.CustomEventNative;
-import com.mopub.nativeads.NativeErrorCode;
-import com.mopub.nativeads.StaticNativeAd;
+import com.mopub.mobileads.SmartAdServerMoPubUtil;
 import com.smartadserver.android.library.exception.SASAdTimeoutException;
 import com.smartadserver.android.library.exception.SASNoAdToDeliverException;
 import com.smartadserver.android.library.model.SASAdPlacement;
@@ -21,7 +18,7 @@ import java.util.Map;
 /**
  * Class that handles a MoPub mediation native ad call to Smart Display SDK.
  */
-public class SASMoPubCustomEventNative extends CustomEventNative {
+public class SmartAdServerNative extends CustomEventNative {
 
     /**
      * Class representing a MoPub native ad with static content (no video).
@@ -55,7 +52,6 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
             if (sasNativeAdElement.getCoverImage() != null) {
                 setMainImageUrl(sasNativeAdElement.getCoverImage().getUrl());
             }
-
 
         }
 
@@ -140,7 +136,7 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
         }
 
         public String getPrivacyInformationIconClickThroughUrl() {
-            return "https://smartadserver.fr/societe/politique-de-confidentialite/";
+            return "https://smartadserver.com/company/privacy-policy/";
         }
 
         public SASNativeAdElement getSASNativeAd() {
@@ -153,14 +149,14 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
                                 @NonNull Map<String, Object> localExtras, @NonNull Map<String, String> serverExtras) {
 
         // First, configure the Smart Display SDK
-        if (!SASMoPubCustomEventUtil.configureSDKIfNeeded(context, serverExtras)) {
+        if (!SmartAdServerMoPubUtil.configureSDKIfNeeded(context, serverExtras)) {
             // Error during configuration
             customEventNativeListener.onNativeAdFailed(NativeErrorCode.NATIVE_ADAPTER_CONFIGURATION_ERROR);
             return;
         }
 
         // Get the Smart ad placement
-        SASAdPlacement adPlacement = SASMoPubCustomEventUtil.getAdPlacementFromServerParams(serverExtras);
+        SASAdPlacement adPlacement = SmartAdServerMoPubUtil.getAdPlacementFromServerParams(serverExtras);
 
         if (adPlacement == null) {
             // Invalid Smart ad placement
@@ -181,7 +177,7 @@ public class SASMoPubCustomEventNative extends CustomEventNative {
 
                 boolean videoRendererAvailable = false;
                 try {
-                    Class.forName("com.mopub.nativeads.SASNativeVideoAdRenderer");
+                    Class.forName("com.mopub.nativeads.SmartAdServerNativeVideoAdRenderer");
                     videoRendererAvailable = true;
                 } catch (ClassNotFoundException ignored) {
                 }

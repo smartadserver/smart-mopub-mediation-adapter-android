@@ -1,4 +1,4 @@
-package com.smartadserver.android.library.mediation;
+package com.mopub.mobileads;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,9 +15,7 @@ import java.util.Map;
 /**
  * Utility class needed by all SASMoPubCustomEvent adapters. Handles Smart Display SDK configuration.
  */
-public class SASMoPubCustomEventUtil {
-
-    private static final String BASE_URL = "https://mobile.smartadserver.com"; // TODO replace it with your own base URL.
+public class SmartAdServerMoPubUtil {
 
     private static final String SITE_ID_KEY = "siteid";
     private static final String PAGE_ID_KEY = "pageid";
@@ -51,7 +49,7 @@ public class SASMoPubCustomEventUtil {
         // We configure the Smart Display SDK if not already done.
         if (!sasConfiguration.isConfigured()) {
             try {
-                sasConfiguration.configure(context, siteId, BASE_URL);
+                sasConfiguration.configure(context, siteId);
                 sasConfiguration.setLoggingEnabled(true);
             } catch (SASConfiguration.ConfigurationException e) {
                 e.printStackTrace();

@@ -10,14 +10,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.smartadserver.android.library.mediation.SASMoPubCustomEventNative;
 import com.smartadserver.android.library.ui.SASNativeAdMediaView;
 
 
 /**
  * MoPub renderer class for SASVideoNativeAd video native ads
  */
-public class SASNativeVideoAdRenderer implements MoPubAdRenderer<SASMoPubCustomEventNative.SASVideoNativeAd> {
+public class SmartAdServerNativeVideoAdRenderer implements MoPubAdRenderer<SmartAdServerNative.SASVideoNativeAd> {
 
     private final ViewBinder mViewBinder;
 
@@ -26,7 +25,7 @@ public class SASNativeVideoAdRenderer implements MoPubAdRenderer<SASMoPubCustomE
      *
      * @param viewBinder The view binder to use when inflating and rendering an ad.
      */
-    public SASNativeVideoAdRenderer(final ViewBinder viewBinder) {
+    public SmartAdServerNativeVideoAdRenderer(final ViewBinder viewBinder) {
         mViewBinder = viewBinder;
     }
 
@@ -82,7 +81,7 @@ public class SASNativeVideoAdRenderer implements MoPubAdRenderer<SASMoPubCustomE
     }
 
     @Override
-    public void renderAdView(@NonNull View view, @NonNull SASMoPubCustomEventNative.SASVideoNativeAd sasVideoNativeAd) {
+    public void renderAdView(@NonNull View view, @NonNull SmartAdServerNative.SASVideoNativeAd sasVideoNativeAd) {
         SASNativeViewHolder sasNativeViewHolder = (SASNativeViewHolder) view.getTag();
 
         if (sasNativeViewHolder == null) {
@@ -119,7 +118,7 @@ public class SASNativeVideoAdRenderer implements MoPubAdRenderer<SASMoPubCustomE
 
     @Override
     public boolean supports(@NonNull BaseNativeAd nativeAd) {
-        return nativeAd instanceof SASMoPubCustomEventNative.SASVideoNativeAd;
+        return nativeAd instanceof SmartAdServerNative.SASVideoNativeAd;
     }
 
     /**
