@@ -1,6 +1,10 @@
 Smart AdServer - MoPub SDK Adapter for Android
 ==============================================
 
+Deprecated
+----------
+This repository and those adapters are now deprecated. They are not supported and will not be updated anymore.
+
 Introduction
 ------------
 The **_Smart AdServer Android SDK_** can be used with **_MoPub SDK_** through Custom Event Classes provided in this repository.
